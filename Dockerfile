@@ -24,8 +24,8 @@ RUN set -ex \
 RUN docker-php-ext-install exif pdo_mysql
 RUN docker-php-ext-install mysqli
 
-RUN apt-get install libsodium-dev -y
-RUN docker-php-ext-install sodium
+#RUN apt-get install libsodium-dev -y
+#RUN docker-php-ext-install sodium
 
 RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip --with-libzip=/usr/include && docker-php-ext-install zip
 
