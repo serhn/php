@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.3-fpm-alpine
 
        
 RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
@@ -24,8 +24,6 @@ RUN set -ex \
 RUN docker-php-ext-install exif pdo_mysql
 RUN docker-php-ext-install mysqli
 
-RUN apt-get install libsodium-dev -y
-RUN docker-php-ext-install sodium
 
 RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip --with-libzip=/usr/include && docker-php-ext-install zip
 
