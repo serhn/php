@@ -38,7 +38,7 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
-#RUN pecl bundle redis && cd redis && phpize && ./configure --enable-redis-igbinary && make && make install && docker-php-ext-enable redis
+RUN pecl bundle redis && cd redis && phpize && ./configure --enable-redis-igbinary && make && make install && docker-php-ext-enable redis
 
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
