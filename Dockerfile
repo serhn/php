@@ -40,6 +40,7 @@ RUN rm /tmp/composer-setup.php
 
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
+RUN apk add --no-cache  sudo
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
