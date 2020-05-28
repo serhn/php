@@ -1,33 +1,27 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.2-fpm
+RUN apt-get update -y && apt-get install -y libpng-dev libsqlite3-dev libjpeg62-turbo-dev libfreetype6-dev 
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
+RUN docker-php-ext-install gd pdo pdo_sqlite exif pdo_mysql zip mysqli
 
-       
-RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
-  docker-php-ext-configure gd \
-    --with-gd \
-    --with-freetype-dir=/usr/include/ \
-    --with-png-dir=/usr/include/ \
-    --with-jpeg-dir=/usr/include/ && \
-  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-  docker-php-ext-install -j${NPROC} gd && \
-  apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
-  
-  
-RUN set -ex \
-    && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool \
-    && export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install imagick-3.4.3 \
-    && docker-php-ext-enable imagick \
-    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
-    && apk del .phpize-deps \
-    && rm -rf /tmp/* /var/cache/apk/*  
+#PGSQL BEGIN
+RUN apt-get install -y libpq-dev
+RUN docker-php-ext-install pdo_pgsql
+#PGSQL END
 
-RUN docker-php-ext-install exif pdo_mysql
-RUN docker-php-ext-install mysqli
+RUN apt-get install -y mysql-client
+RUN apt-get install -y net-tools vim
+RUN apt-get install -y git
 
+# build-essential
+RUN apt-get install -y procps
+RUN apt-get install -y nmap mc tmux screen
+RUN apt-get install -y dnsutils 
+RUN apt-get install -y gnupg2
 
-RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip --with-libzip=/usr/include && docker-php-ext-install zip
+#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
 
-RUN apk add --no-cache libintl icu icu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
@@ -37,19 +31,32 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
-RUN apk add --no-cache  supervisor
-RUN apk add --no-cache  git
-
-RUN rm -rf /tmp/* /var/cache/apk/*
-
-RUN echo '* * * * * cd /usr/share/nginx && php artisan schedule:run >> /dev/null 2>&1' > /etc/crontabs/www-data
-
-RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
-RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisord.conf
-RUN echo -e "[program:php-fpm]\ncommand=php-fpm -F\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
-RUN echo -e "[program:phpjob]\ncommand=php artisan queue:work --tries=3\nuser=www-data\nnumprocs=1\ndirectory=/usr/share/nginx\nautostart=true\nautorestart=true\nstdout_logfile=/dev/stdout\nstderr_logfile=/dev/stderr\n" >> /etc/supervisord.conf
-RUN echo -e "[program:crond]\ncommand=crond\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
+RUN apt-get install -y libmagickwand-dev
+RUN pecl install imagick-beta
+RUN echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini
 
 
-ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+RUN echo  "\
+xdebug.remote_port=9000 \n\
+xdebug.remote_enable=on \n\ 
+xdebug.remote_log=/var/log/xdebug.log " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN touch /var/log/xdebug.log
 
+RUN apt-get install -y ssmtp
+RUN echo "[mail function]\nsendmail_path = /usr/sbin/ssmtp -t" > /usr/local/etc/php/conf.d/sendmail.ini
+RUN echo "mailhub=mailcatcher:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
+
+
+RUN echo  "\
+syntax on \n\
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP \n\
+set number \n\
+:set encoding=utf-8 \n\
+:set fileencoding=utf-8"  >> /root/.vimrc
+
+RUN apt-get -y install cron
+RUN touch /etc/cron.d/crontab
+RUN chmod 0644 /etc/cron.d/crontab
+RUN service cron start
