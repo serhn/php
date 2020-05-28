@@ -8,7 +8,7 @@ RUN apt-get install -y libpq-dev
 RUN docker-php-ext-install pdo_pgsql
 #PGSQL END
 
-RUN apt-get install -y mysql-client
+#RUN apt-get install -y mysql-client
 RUN apt-get install -y net-tools vim
 RUN apt-get install -y git
 
