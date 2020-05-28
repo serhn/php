@@ -1,26 +1,18 @@
-FROM php:7.2-fpm
-RUN apt-get update -y && apt-get install -y libpng-dev libsqlite3-dev libjpeg62-turbo-dev libfreetype6-dev 
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
-RUN docker-php-ext-install gd pdo pdo_sqlite exif pdo_mysql zip mysqli
+FROM php:7.1-fpm-alpine
 
-#PGSQL BEGIN
-RUN apt-get install -y libpq-dev
-RUN docker-php-ext-install pdo_pgsql
-#PGSQL END
+RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
+  docker-php-ext-configure gd \
+    --with-gd \
+    --with-freetype-dir=/usr/include/ \
+    --with-png-dir=/usr/include/ \
+    --with-jpeg-dir=/usr/include/ && \
+  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
+  docker-php-ext-install -j${NPROC} gd && \
+  apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
 
-RUN apt-get install -y mysql-client
-RUN apt-get install -y net-tools vim
-RUN apt-get install -y git
+RUN docker-php-ext-install exif pdo_mysql
 
-# build-essential
-RUN apt-get install -y procps
-RUN apt-get install -y nmap mc tmux screen
-RUN apt-get install -y dnsutils 
-RUN apt-get install -y gnupg2
 
-#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get install -y nodejs
 
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
@@ -31,32 +23,3 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
-RUN apt-get install -y libmagickwand-dev
-RUN pecl install imagick-beta
-RUN echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini
-
-
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
-RUN echo  "\
-xdebug.remote_port=9000 \n\
-xdebug.remote_enable=on \n\ 
-xdebug.remote_log=/var/log/xdebug.log " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN touch /var/log/xdebug.log
-
-RUN apt-get install -y ssmtp
-RUN echo "[mail function]\nsendmail_path = /usr/sbin/ssmtp -t" > /usr/local/etc/php/conf.d/sendmail.ini
-RUN echo "mailhub=mailcatcher:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
-
-
-RUN echo  "\
-syntax on \n\
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP \n\
-set number \n\
-:set encoding=utf-8 \n\
-:set fileencoding=utf-8"  >> /root/.vimrc
-
-RUN apt-get -y install cron
-RUN touch /etc/cron.d/crontab
-RUN chmod 0644 /etc/cron.d/crontab
-RUN service cron start
