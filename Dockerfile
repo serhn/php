@@ -43,6 +43,19 @@ RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
 RUN apk add openssh-client
 
+#mongo db ext begin
+RUN apk --update add \
+    alpine-sdk \
+    openssl-dev \
+    php7-pear \
+    php7-dev \
+    && rm -rf /var/cache/apk/*
+
+RUN pecl install mongodb \
+    && pecl clear-cache
+
+RUN echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini
+#mongdb exto end
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
