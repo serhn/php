@@ -25,8 +25,7 @@ RUN docker-php-ext-install exif pdo_mysql
 RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install pcntl
 
-RUN yes "" | pecl install redis 
-RUN docker-php-ext-enable redis
+
 
 #RUN apt-get install libsodium-dev -y
 #RUN docker-php-ext-install sodium
@@ -62,6 +61,9 @@ RUN pecl install mongodb \
 #RUN echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini
 RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
+
+RUN yes "" | pecl install redis 
+RUN docker-php-ext-enable redis
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
