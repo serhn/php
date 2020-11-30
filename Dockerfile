@@ -34,12 +34,12 @@ RUN apk add openssh-client
 RUN rm -rf /tmp/* /var/cache/apk/*
 
 
-#RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.back
-#COPY config/nginx.conf /etc/nginx/nginx.conf
+RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.back
+COPY config/nginx.conf /etc/nginx/nginx.conf
 
 
 RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
-COPY config/supervisord.conf /etc/supervisord.conf.back
+COPY config/supervisord.conf /etc/supervisord.conf
 
 
 RUN mv /usr/local/etc/php-fpm.d/www.conf  /usr/local/etc/php-fpm.d/www.conf.back
