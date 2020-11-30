@@ -46,7 +46,7 @@ RUN mv /usr/local/etc/php-fpm.d/www.conf  /usr/local/etc/php-fpm.d/www.conf.back
 COPY config/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
 
 
-COPY config/php.ini-development /usr/local/etc/php/php.ini
+COPY config/php.ini /usr/local/etc/php/php.ini
 
 #COPY --chown=nobody src/ /var/www/html/
 
