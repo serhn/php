@@ -34,13 +34,21 @@ RUN apk add openssh-client
 RUN rm -rf /tmp/* /var/cache/apk/*
 
 
+RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.back
+COPY config/nginx.conf /etc/nginx/nginx.conf
+
 
 RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
-RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisord.conf
-RUN echo -e "[program:php-fpm]\ncommand=php-fpm -F\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
-RUN echo -e "[program:crond]\ncommand=crond\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
-RUN echo -e "[program:nginx]\ncommand=nginx\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
+COPY config/supervisord.conf /etc/supervisord.conf.back
 
+
+RUN mv /usr/local/etc/php-fpm.d/www.conf  /usr/local/etc/php-fpm.d/www.conf.back
+COPY config/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
+
+
+COPY config/php.ini-development /usr/local/etc/php/php.ini
+
+#COPY --chown=nobody src/ /var/www/html/
 
 WORKDIR "/usr/share/nginx"
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
