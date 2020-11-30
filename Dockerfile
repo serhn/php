@@ -25,6 +25,11 @@ RUN rm /tmp/composer-setup.php
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
+RUN apk add --no-cache  supervisor
+RUN apk add --no-cache  git
+RUN apk add --no-cache  sudo
+RUN apk add openssh-client
+
 RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
 RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisord.conf
 RUN echo -e "[program:php-fpm]\ncommand=php-fpm -F\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
