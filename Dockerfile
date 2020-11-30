@@ -23,12 +23,14 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
-RUN rm -rf /tmp/* /var/cache/apk/*
-
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
 RUN apk add openssh-client
+
+RUN rm -rf /tmp/* /var/cache/apk/*
+
+
 
 RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
 RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisord.conf
