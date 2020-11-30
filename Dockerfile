@@ -26,6 +26,9 @@ RUN rm /tmp/composer-setup.php
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
+RUN apk add --no-cache  nginx
+RUN mkdir /run/nginx
+
 RUN apk add openssh-client
 
 RUN rm -rf /tmp/* /var/cache/apk/*
@@ -36,6 +39,8 @@ RUN mv /etc/supervisord.conf  /etc/supervisord.conf.back
 RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisord.conf
 RUN echo -e "[program:php-fpm]\ncommand=php-fpm -F\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
 RUN echo -e "[program:crond]\ncommand=crond\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
+RUN echo -e "[program:nginx]\ncommand=nginx\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\nautorestart=true\nstartretries=0\n" >> /etc/supervisord.conf
+
 
 WORKDIR "/usr/share/nginx"
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
