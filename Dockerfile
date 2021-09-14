@@ -47,6 +47,10 @@ RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
 RUN apk add openssh-client
 
+RUN apk add mysql-client
+RUN apk add zip
+
+
 #mongo db ext begin
 RUN apk --update add \
     alpine-sdk \
