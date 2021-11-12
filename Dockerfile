@@ -42,14 +42,16 @@ ENV USER=php
 ENV UID=1000
 ENV GID=1000
 
-RUN adduser \
+RUN addgroup -S "$USER" --gid="$GID" && \
+    adduser \
+    -G "$USER" \
     --disabled-password \
     --gecos "" \
     --home "/home/php" \
     --ingroup "$USER" \
-    --no-create-home \
     --uid "$UID" \
     "$USER"
+
 
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
