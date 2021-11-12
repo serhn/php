@@ -42,6 +42,20 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
+ENV USER=php
+ENV UID=1000
+ENV GID=1000
+RUN addgroup -S "$USER" --gid="$GID" && \
+    adduser \
+    -G "$USER" \
+    --disabled-password \
+    --gecos "" \
+    --home "/home/php" \
+    --ingroup "$USER" \
+    --uid "$UID" \
+    "$USER"
+
+
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
