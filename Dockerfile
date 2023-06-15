@@ -69,14 +69,14 @@ RUN apk add zip
 RUN apk --update add \
     alpine-sdk \
     openssl-dev \
-    php7-pear \
-    php7-dev \
+    php8-pear \
+    php8-dev \
     && rm -rf /var/cache/apk/*
 
 RUN pecl install mongodb \
     && pecl clear-cache
 
-#RUN echo "extension=mongodb.so" > /etc/php7/conf.d/mongodb.ini
+#RUN echo "extension=mongodb.so" > /etc/php8/conf.d/mongodb.ini
 RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
 
