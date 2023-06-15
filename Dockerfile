@@ -1,4 +1,4 @@
-FROM php:8.1.0RC5-fpm-alpine
+FROM php:8.2.7-fpm-alpine3.18
 
        
 RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
