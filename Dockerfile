@@ -63,6 +63,7 @@ RUN apk add openssh-client
 
 RUN apk add mysql-client
 RUN apk add zip
+RUN apk add openvpn
 
 
 #mongo db ext begin
