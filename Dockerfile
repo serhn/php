@@ -63,6 +63,7 @@ RUN apk add openssh-client
 
 RUN apk add mysql-client
 RUN apk add zip
+RUN apk add openvpn
 
 
 #mongo db ext begin
@@ -95,4 +96,3 @@ RUN echo -e "[program:crond]\ncommand=crond\nstdout_logfile=/dev/stdout\nstdout_
 
 WORKDIR "/usr/share/nginx"
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
-
