@@ -1,5 +1,7 @@
 FROM php:8.2.7-fpm-alpine3.18
 
+RUN apk update; \
+    apk upgrade;
        
 #RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
 #  docker-php-ext-configure gd \
@@ -71,7 +73,7 @@ RUN apk add openvpn
 
 
 #mongo db ext begin
-#RUN apk --update add \
+#RUN apk add \
 #    alpine-sdk \
 #    openssl-dev \
 #    php82-pear \
