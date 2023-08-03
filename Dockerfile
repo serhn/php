@@ -31,8 +31,8 @@ RUN docker-php-ext-install pcntl
 
 
 
-RUN apt-get install libsodium-dev -y
-RUN docker-php-ext-install sodium
+#RUN apt-get install libsodium-dev -y
+#RUN docker-php-ext-install sodium
 
 RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip && docker-php-ext-install zip
 
