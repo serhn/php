@@ -1,36 +1,38 @@
 FROM php:8.2.7-fpm-alpine3.18
 
        
-RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
-  docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg && \
-  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
-  docker-php-ext-install -j${NPROC} gd && \
-  apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
+#RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev && \
+#  docker-php-ext-configure gd \
+#    --with-freetype \
+#    --with-jpeg && \
+#  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
+#  docker-php-ext-install -j${NPROC} gd && \
+#  apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
   
 
 RUN apk add --no-cache tzdata
 ENV TZ=Europe/Kiev
   
-  
+#3.5.1  
 RUN set -ex \
     && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS imagemagick-dev libtool \
     && export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install imagick-3.5.1 \
+    && pecl install imagick-3.7.0 \
     && docker-php-ext-enable imagick \
     && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
     && apk del .phpize-deps \
     && rm -rf /tmp/* /var/cache/apk/*  
 
-RUN docker-php-ext-install exif pdo_mysql
-RUN docker-php-ext-install mysqli
+#RUN docker-php-ext-install exif 
+RUN docker-php-ext-install pdo_mysql
+
+#RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install pcntl
 
 
 
-#RUN apt-get install libsodium-dev -y
-#RUN docker-php-ext-install sodium
+RUN apt-get install libsodium-dev -y
+RUN docker-php-ext-install sodium
 
 RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip && docker-php-ext-install zip
 
@@ -61,26 +63,26 @@ RUN addgroup -S "$USER" --gid="$GID" && \
 RUN apk add --no-cache  supervisor
 RUN apk add --no-cache  git
 RUN apk add --no-cache  sudo
-RUN apk add openssh-client
+#RUN apk add openssh-client
 
-RUN apk add mysql-client
-RUN apk add zip
+#RUN apk add mysql-client
+#RUN apk add zip
 RUN apk add openvpn
 
 
 #mongo db ext begin
-RUN apk --update add \
-    alpine-sdk \
-    openssl-dev \
-    php82-pear \
-    php82-dev \
-    && rm -rf /var/cache/apk/*
+#RUN apk --update add \
+#    alpine-sdk \
+#    openssl-dev \
+#    php82-pear \
+#    php82-dev \
+#    && rm -rf /var/cache/apk/*
 
-RUN pecl install mongodb \
-    && pecl clear-cache
+#RUN pecl install mongodb \
+#    && pecl clear-cache
 
 #RUN echo "extension=mongodb.so" > /etc/php82/conf.d/mongodb.ini
-RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
+#RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
 
 RUN yes "" | pecl install redis 
