@@ -11,7 +11,7 @@ RUN apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev lib
   
 
 RUN apk add --no-cache tzdata
-ENV TZ=Europe/Copenhagen
+ENV TZ=Europe/Kiev
   
   
 RUN set -ex \
