@@ -85,8 +85,7 @@ RUN apk add openvpn
 #RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
 
-
-RUN apk add libzstd-dev
+RUN apk --no-cache add --update zstd-dev
 RUN yes "" | pecl install redis 
 RUN docker-php-ext-enable redis
 
