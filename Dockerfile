@@ -69,7 +69,7 @@ RUN apk add --no-cache  sudo
 
 #RUN apk add mysql-client
 #RUN apk add zip
-RUN apk add openvpn
+RUN apk add --no-cache openvpn
 
 
 #mongo db ext begin
