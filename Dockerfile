@@ -85,9 +85,11 @@ RUN apk add openvpn
 #RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
 
-RUN apk --no-cache add --update zstd-dev
-RUN yes "" | pecl install redis 
-RUN docker-php-ext-enable redis
+
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
+    && yes "" | pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del pcre-dev $PHPIZE_DEPS
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
