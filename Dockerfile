@@ -71,12 +71,12 @@ RUN apk add openvpn
 
 
 #mongo db ext begin
-RUN apk --update add \
-    alpine-sdk \
-    openssl-dev \
-    php82-pear \
-    php82-dev \
-    && rm -rf /var/cache/apk/*
+#RUN apk --update add \
+#    alpine-sdk \
+#    openssl-dev \
+#    php82-pear \
+#    php82-dev \
+#    && rm -rf /var/cache/apk/*
 
 #RUN pecl install mongodb \
 #    && pecl clear-cache
@@ -85,6 +85,8 @@ RUN apk --update add \
 #RUN echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/docker-php-ext-mongodb.ini 
 #mongdb exto end
 
+
+RUN apk add libzstd-dev
 RUN yes "" | pecl install redis 
 RUN docker-php-ext-enable redis
 
