@@ -22,6 +22,21 @@ ENV TZ=Europe/Kiev
 ##    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
 ##    && apk del .phpize-deps \
 ##    && rm -rf /tmp/* /var/cache/apk/*  
+RUN set -ex \
+    && curl -fsSL 'https://pecl.php.net/get/imagick-3.7.0.tgz' -o imagick.tar.gz \
+    && mkdir -p imagick \
+    && tar -xf imagick.tar.gz -C imagick --strip-components=1 \
+    && rm imagick.tar.gz \
+    && ( \
+        cd imagick \
+        && phpize \
+        && ./configure \
+        && make -j "$(nproc)" \
+        && make install \
+    ) \
+    && rm -r imagick \
+    && docker-php-ext-enable imagick
+
 
 RUN docker-php-ext-install exif pdo_mysql
 RUN docker-php-ext-install mysqli
