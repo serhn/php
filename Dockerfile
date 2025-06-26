@@ -50,7 +50,8 @@ RUN addgroup -S "$USER" --gid="$GID" && \
     "$USER"
 
 
-RUN apk add --no-cache  supervisor
+RUN apk add --no-cache supervisor 
+RUN apk add --no-cache openvpn
 
 RUN rm -rf /tmp/* /var/cache/apk/*
 
